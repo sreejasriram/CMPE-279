@@ -57,21 +57,15 @@ int err;
 	perror("accept");
 	exit(EXIT_FAILURE);
 	}
-	//****************
 	current_pid=fork();
-	if(current_pid==0){//child
+	if(current_pid==0){
+		//child- fork() returns 0 in child
 		printf("Running in Child\n");
 		//reduce privileges
-
 		privilegeSet = setuid(65534); 
-
-
-
-
 		//printf("privilege Set: %d\n",privilegeSet);
 		if(privilegeSet ==-1){
-			printf("Error dropping privilege\n");
-
+			printf("Error in reducing Privilege\n");
 			return 0;
 		}
 		valread = read( new_socket , buffer, 1024);
@@ -79,16 +73,16 @@ int err;
 		send(new_socket , hello , strlen(hello) , 0 );
 		printf("Hello message sent\n");
 	}
-	else if(current_pid>0){//parent
-		//wait(200);
-		printf("Running in Parent...\n");
+	else if(current_pid>0){
+	//parent- fork() returns child id in parent
+		wait(2);//parent should continue execution after child
+		printf("Returned to Parent...\n");
 
 	}
 	else{
-		perror("fork failed");
-		exit(EXIT_FAILURE);
+		perror("Unable to fork");
+		_exit(2);
 	}
-	//******************
 	
 	return 0;
 }
